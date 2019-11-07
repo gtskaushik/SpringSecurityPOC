@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import net.dotconn.admin.user.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -15,13 +16,9 @@ public class Thing {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany
-    @JoinTable(
-            name = "thing_params",
-            joinColumns = @JoinColumn(
-                    name = "thing_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "param_id", referencedColumnName = "id"))
+    @Convert(converter = ListParameterToStringConverter.class)
+    @Lob
+    @NotNull
     private List<Parameter> params;
 
     @OneToOne
@@ -34,3 +31,4 @@ public class Thing {
     @JsonIgnore
     private User user;
 }
+

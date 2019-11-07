@@ -3,7 +3,6 @@ package net.dotconn.admin.init;
 import net.dotconn.admin.tenant.Tenant;
 import net.dotconn.admin.tenant.TenantRepository;
 import net.dotconn.admin.thing.Parameter;
-import net.dotconn.admin.thing.ParameterRepository;
 import net.dotconn.admin.thing.Thing;
 import net.dotconn.admin.thing.ThingRepository;
 import net.dotconn.admin.user.Privilege;
@@ -29,7 +28,6 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired private RoleRepository roleRepository;
     @Autowired private PrivilegeRepository privilegeRepository;
     @Autowired private ThingRepository thingRepository;
-    @Autowired private ParameterRepository parameterRepository;
     @Autowired private TenantRepository tenantRepository;
 
     @Override
@@ -37,7 +35,7 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (alreadySetup)
             return; // Already called. This method will be called multiple times
-                    // whenever context is refreshed
+        // whenever context is refreshed
 
         Tenant tenant = new Tenant();
 //        tenant.setUsers(List.of(user, user1));
@@ -50,7 +48,8 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
                 createPrivilegeIfNotFound("WRITE_PRIVILEGE")
         );
         Set<Role> roles = Set.of(
-                createRoleIfNotFound("ADMIN", privileges)
+                createRoleIfNotFound("ADMIN", privileges),
+                createRoleIfNotFound("USER", privileges)
         );
 
         User user = new User();
@@ -76,23 +75,15 @@ public class Initializer implements ApplicationListener<ContextRefreshedEvent> {
         user1.setPassword("gtsleela");
         userRepository.save(user1);
 
-        List<Parameter> params = List.of(
-                new Parameter("s001", "act_p"),
-                new Parameter("s002", "app_p")
-        );
-        parameterRepository.saveAll(params);
         Thing thing = new Thing();
-        thing.setParams(params);
+        thing.setParams(List.of(new Parameter("s001", "s001"),
+                new Parameter("s002", "s002")));
         thing.setUser(user);
         thingRepository.save(thing);
 
-        List<Parameter> params1 = List.of(
-                new Parameter("s003", "act_p"),
-                new Parameter("s004", "app_p")
-        );
-        parameterRepository.saveAll(params1);
         Thing thing1 = new Thing();
-        thing1.setParams(params1);
+        thing1.setParams(List.of(new Parameter("s003", "s003"),
+                new Parameter("s004", "s004")));
         thing1.setUser(user1);
         thingRepository.save(thing1);
 
